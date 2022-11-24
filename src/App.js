@@ -1,9 +1,11 @@
 // Global
 import React from 'react';
 
+// Components
+import TodoList from './components/Todo/TodoList/TodoList';
+
 // Styles
 import './App.less';
-import TodoList from './components/Todo/TodoList/TodoList';
 
 function App() {
   return (
