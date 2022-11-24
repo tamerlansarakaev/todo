@@ -1,0 +1,55 @@
+.todo-item {
+  display: flex;
+  max-width: 1000px;
+  width: 100%;
+  border: 1px #1212 solid;
+  border-radius: 12px;
+  padding: 25px;
+  justify-content: space-between;
+  box-sizing: border-box;
+
+  .todo-info {
+    max-width: 700px;
+  }
+
+  .todo-info__name {
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  .todo-info__decription {
+    margin-top: 10px;
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  .todo-other-info {
+    display: flex;
+    flex-direction: column;
+
+    .todo-delete {
+      margin-bottom: 10px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      box-sizing: border-box;
+      border-radius: 12px;
+      background: #343434;
+      color: #fff;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: #282828;
+      box-shadow: 1px 2px 3px #12121266;
+    }
+
+    .todo-change {
+      margin-bottom: 15px;
+    }
+  }
+}
