@@ -1,79 +1,49 @@
 import axios from 'axios';
 
-async function api({
-  setTodoItems,
-  setTodoKeys,
-  setTodos,
-  stateInputs,
-  apiStatus,
-  deleteTodo,
-}) {
-  const apiURI =
-    'https://todo-e62a9-default-rtdb.europe-west1.firebasedatabase.app/todos.json';
-  const basicURI =
-    'https://todo-e62a9-default-rtdb.europe-west1.firebasedatabase.app/todos';
-  const inputs = stateInputs;
-  if (apiStatus === 'get') {
-    return await axios
-      .get(apiURI)
-      .then((response) => response.data)
-      .then((data) => {
-        data && setTodos(Object.values(data));
-        data && setTodoKeys(Object.keys(data));
-      });
-  }
+export const API_URL =
+  'https://todo-e62a9-default-rtdb.europe-west1.firebasedatabase.app';
 
-  if (apiStatus === 'post') {
-    await axios
-      .get(apiURI)
-      .then((response) => response.data)
-      .then((data) => {
-        data && setTodos(Object.values(data));
-        data && setTodoKeys(Object.keys(data));
-      });
+export const postAPI = async (formData, path) => {
+  if (formData) {
     return await axios({
       method: 'post',
-      url: apiURI,
+      url: `${API_URL}/${path}`,
       data: {
-        name: inputs.nameInput,
-        description: inputs.descriptionInput,
-        endDate: inputs.endDate,
+        name: formData.name,
+        description: formData.description,
+        endDate: formData.endDate,
+        fileName: formData.fileName || '',
+        filePath: formData.filePath || '',
       },
-    })
-      .then(() => {
-        axios
-          .get(apiURI)
-          .then((response) => response.data)
-          .then((data) => {
-            data && setTodoItems(Object.values(data));
-            data && setTodoKeys(Object.keys(data));
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    });
   }
-  if (apiStatus === 'delete' && deleteTodo) {
-    await axios
-      .delete(`${basicURI}/${deleteTodo}.json`)
-      .then(() =>
-        axios
-          .get(apiURI)
-          .then((response) => response.data)
-          .then((data) => {
-            if (data) {
-              setTodoItems(Object.values(data));
-              setTodoKeys(Object.keys(data));
-            }
-            if (data === null) {
-              return setTodoItems([]);
-            }
+};
+
+export const getApiItems = async (url, items, path) => {
+  if (!items) return;
+  return await axios
+    .get(`${url}/${path}`)
+    .then((response) => response.data)
+    .then((data) => {
+      data &&
+        items(
+          Object.values(data).map((object, i) => {
+            const items = Object.entries(data);
+            const id = items[i][0];
+            return { ...object, id };
           })
-      )
-      .catch((e) => console.log(e));
+        );
+      !data && items([]);
+    })
+    .catch((err) => console.log(err));
+};
 
-    return (apiStatus = 'get');
-  }
-}
+export const deleteItemsAPI = async (deleteKey, url) => {
+  if (!deleteKey) return;
+  await axios.delete(`${url}/${deleteKey}.json`).catch((e) => console.log(e));
+};
 
-export default api;
+export const updateItemsApi = async (updateKey, url, updateItem) => {
+  if (!updateKey && updateItem) return;
+  await axios.patch(`${url}/${updateKey}.json`, updateItem);
+};
