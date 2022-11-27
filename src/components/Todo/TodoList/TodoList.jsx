@@ -17,8 +17,10 @@ import { postFormData } from '../../postFormData';
 import './TodoList.less';
 
 function TodoList() {
+  const urlApi = `${API_URL}/todos`;
   const currentDateMillisecond = new Date().getTime();
   const [status, setStatus] = React.useState(null);
+  const [statusUpdate, setStatusUpdate] = React.useState(false);
   const [todos, setTodos] = React.useState();
   const [fileUpload, setFileUpload] = React.useState(null);
   const [isPosting, setIsPosting] = React.useState({
@@ -47,10 +49,7 @@ function TodoList() {
           formData.fileName = fileInfo.fileName;
 
           postAPI(formData, 'todos.json').then(() => {
-            getApiItems(API_URL, '/todos.json').then((res) => {
-              setTodos(res);
-              setIsPosting(() => ({ status: false, title: 'Post!' }));
-            });
+            getApiItems(API_URL, '/todos.json').then((res) => setTodos(res));
           });
         }
       } else {
@@ -58,6 +57,7 @@ function TodoList() {
           getApiItems(API_URL, '/todos.json').then((res) => setTodos(res));
         });
       }
+      setIsPosting(() => ({ status: false, title: 'Post!' }));
       clearForm();
     }
   }
@@ -76,7 +76,11 @@ function TodoList() {
 
   React.useEffect(() => {
     getApiItems(API_URL, '/todos.json').then((res) => setTodos(res));
-  }, []);
+    if (statusUpdate) {
+      getApiItems(API_URL, '/todos.json').then((res) => setTodos(res));
+      setStatusUpdate(false);
+    }
+  }, [statusUpdate]);
 
   return (
     <div className="todo-list">
@@ -159,7 +163,7 @@ function TodoList() {
                 url: todo.filePath,
               }}
               onChangeTodo={(item) => {
-                updateItemsApi(todo.id, `${API_URL}/todos`, item).then(() => {
+                updateItemsApi(todo.id, urlApi, item).then(() => {
                   getApiItems(API_URL, '/todos.json').then((res) =>
                     setTodos(res)
                   );
@@ -167,10 +171,8 @@ function TodoList() {
               }}
               currentDateMillisecond={currentDateMillisecond}
               onDelete={() =>
-                deleteItemsAPI(todo.id, `${API_URL}/todos`).then(() => {
-                  getApiItems(API_URL, '/todos.json').then((res) =>
-                    setTodos(res)
-                  );
+                deleteItemsAPI(todo.id, urlApi).then(() => {
+                  setStatusUpdate(true);
                 })
               }
               key={i}

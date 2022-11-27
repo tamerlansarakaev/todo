@@ -11,11 +11,9 @@ async function uploadFile(fileUpload) {
   const currentFile = fileUpload.name;
   const fileRef = ref(storage, `files/${currentFile}`);
 
-  const uploaded = await uploadBytes(fileRef, fileUpload)
-    .then((res) => {
-      return res.metadata;
-    })
-    .catch((err) => console.log(err));
+  const uploaded = await uploadBytes(fileRef, fileUpload).then((res) => {
+    return res.metadata;
+  });
   return uploaded;
 }
 

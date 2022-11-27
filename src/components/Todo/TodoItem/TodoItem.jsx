@@ -73,7 +73,7 @@ function TodoItem({
         <p className="todo-info__name">Name: {name}</p>
         <p className="todo-info__decription">Decription: {description}</p>
         <p className="todo-info__status">Status: {date && statusDate}</p>
-        {formData.filePath && (
+        {file.url && (
           <span className="todo-info__file">
             Your file:
             <a href={file.url} target="_blank" rel="noreferrer">
