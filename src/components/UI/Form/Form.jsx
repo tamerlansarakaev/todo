@@ -1,12 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 // Styles
 import './Form.less';
-
-/**
- * @param title - Form header
- * @type {{ title: string }}
- */
 
 function Form({ title, children, className }) {
   return (
@@ -19,5 +15,10 @@ function Form({ title, children, className }) {
     </form>
   );
 }
+
+Form.propTypes = {
+  title: PropTypes.string.isRequired,
+  className: PropTypes.string,
+};
 
 export default Form;
