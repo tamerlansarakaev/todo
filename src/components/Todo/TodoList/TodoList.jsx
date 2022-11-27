@@ -39,8 +39,9 @@ function TodoList() {
     const { name, description, endDate } = formData;
     const dataIsFine = name && description && endDate;
 
-    setIsPosting(() => ({ status: true, title: 'Loading...' }));
     if (dataIsFine) {
+      setIsPosting(() => ({ status: true, title: 'Loading...' }));
+
       if (fileUpload) {
         const fileInfo = await postFormData(fileUpload);
 
