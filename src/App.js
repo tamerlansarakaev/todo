@@ -1,4 +1,3 @@
-// Global
 import React from 'react';
 
 // Components
