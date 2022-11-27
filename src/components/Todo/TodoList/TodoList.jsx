@@ -11,16 +11,20 @@ import {
   API_URL,
   updateItemsApi,
 } from '../../api';
+import { postFormData } from '../../postFormData';
 
 // Styles
 import './TodoList.less';
-import { postFormData } from '../../postFormData';
 
 function TodoList() {
   const currentDateMillisecond = new Date().getTime();
   const [status, setStatus] = React.useState(null);
   const [todos, setTodos] = React.useState();
   const [fileUpload, setFileUpload] = React.useState(null);
+  const [isPosting, setIsPosting] = React.useState({
+    title: 'Post!',
+    status: false,
+  });
   const [formData, setFormData] = React.useState({
     name: '',
     description: '',
@@ -33,6 +37,7 @@ function TodoList() {
     const { name, description, endDate } = formData;
     const dataIsFine = name && description && endDate;
 
+    setIsPosting(() => ({ status: true, title: 'Loading...' }));
     if (dataIsFine) {
       if (fileUpload) {
         const fileInfo = await postFormData(fileUpload);
@@ -42,12 +47,15 @@ function TodoList() {
           formData.fileName = fileInfo.fileName;
 
           postAPI(formData, 'todos.json').then(() => {
-            getApiItems(API_URL, (items) => setTodos(items), '/todos.json');
+            getApiItems(API_URL, '/todos.json').then((res) => {
+              setTodos(res);
+              setIsPosting(() => ({ status: false, title: 'Post!' }));
+            });
           });
         }
       } else {
         postAPI(formData, 'todos.json').then(() => {
-          getApiItems(API_URL, (items) => setTodos(items), '/todos.json');
+          getApiItems(API_URL, '/todos.json').then((res) => setTodos(res));
         });
       }
       clearForm();
@@ -67,7 +75,7 @@ function TodoList() {
   }
 
   React.useEffect(() => {
-    getApiItems(API_URL, (items) => setTodos(items), '/todos.json');
+    getApiItems(API_URL, '/todos.json').then((res) => setTodos(res));
   }, []);
 
   return (
@@ -129,11 +137,12 @@ function TodoList() {
           />
           <button
             className="todo-list__create-button"
+            disabled={isPosting && isPosting.status}
             onClick={() => {
               handleSubmit(formData);
             }}
           >
-            Post
+            {isPosting && isPosting.title}
           </button>
         </Form>
       )}
@@ -151,20 +160,16 @@ function TodoList() {
               }}
               onChangeTodo={(item) => {
                 updateItemsApi(todo.id, `${API_URL}/todos`, item).then(() => {
-                  getApiItems(
-                    API_URL,
-                    (todo) => setTodos(todo),
-                    './todos.json'
+                  getApiItems(API_URL, '/todos.json').then((res) =>
+                    setTodos(res)
                   );
                 });
               }}
               currentDateMillisecond={currentDateMillisecond}
               onDelete={() =>
                 deleteItemsAPI(todo.id, `${API_URL}/todos`).then(() => {
-                  getApiItems(
-                    API_URL,
-                    (todo) => setTodos(todo),
-                    './todos.json'
+                  getApiItems(API_URL, '/todos.json').then((res) =>
+                    setTodos(res)
                   );
                 })
               }

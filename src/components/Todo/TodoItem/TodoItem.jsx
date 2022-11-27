@@ -1,6 +1,7 @@
 // Global
 import React from 'react';
 import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
 
 // Styles
 import './TodoItem.less';
@@ -152,4 +153,12 @@ function TodoItem({
     </div>
   );
 }
+
+TodoItem.propTypes = {
+  name: PropTypes.string,
+  description: PropTypes.string,
+  date: PropTypes.string,
+  currentDateMillisecond: PropTypes.number,
+  file: PropTypes.object,
+};
 export default TodoItem;
